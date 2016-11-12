@@ -31,7 +31,6 @@ class LegendMini extends View {
 	private LegendItem[] legendItems;
 	private Slice[] slices;
 	private Drawable mDropVector;
-	private Context mContext;
 
 	public LegendMini(@NonNull Context context) {
 		super(context);
@@ -41,7 +40,6 @@ class LegendMini extends View {
 	private void init(@NonNull Context context) {
 		setWillNotDraw(false);
 		// initialize variables
-		this.mContext = context;
 		if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
 			mDropVector = VectorDrawableCompat.create(getResources(), R.drawable.ic_drop, context.getTheme());
 		} else {
@@ -98,7 +96,6 @@ class LegendMini extends View {
 			Rect bounds = new Rect();
 			mLegendPaint.getTextBounds(legendItem.text, 0, legendItem.text.length(), bounds);
 			float itemSize = mLegendBoxSizePx + bounds.width() + LEGEND_ITEM_BOX_MARGIN;
-
 			RectF box_bounds = new RectF(0, 0, mLegendBoxSizePx, mLegendBoxSizePx );
 			RectF text_bounds = new RectF(0,bounds.height(),bounds.width(),0);
 			box_bounds.offset(totWidth, LEGEND_ITEM_VERT_INTERLINE);
@@ -106,7 +103,7 @@ class LegendMini extends View {
 			legendItem.boxrec = box_bounds;
 			legendItem.textrec = text_bounds;
 			items[i]=legendItem;
-			totWidth += itemSize+LEGEND_ITEM_MARGIN;
+			if (legendItem.percent!=0) totWidth += itemSize+LEGEND_ITEM_MARGIN;
 		}
 		return items;
 	}
@@ -127,14 +124,9 @@ class LegendMini extends View {
 				legendItems[i].boxrec.offset(-totWidth, row*30 + LEGEND_ITEM_VERT_INTERLINE);
 				legendItems[i].textrec.offset(-totWidth, row*30 + LEGEND_ITEM_VERT_INTERLINE);
 			}
-
-
 			mBoxPaint.setColor(slices[i].sliceColor);
 			Utils.PVGColors.tintMyDrawable(mDropVector, slices[i].sliceColor);
 			canvas.drawBitmap(Utils.getBitmapFromVectorDrawable(mDropVector), null, legendItems[i].boxrec, null);
-
-			//canvas.drawRect(legendItems[i].boxrec, mBoxPaint);
-
 			canvas.drawText(legendItems[i].text, legendItems[i].textrec.left,
 					legendItems[i].textrec.top, mLegendPaint);
 			totWidth += width;
