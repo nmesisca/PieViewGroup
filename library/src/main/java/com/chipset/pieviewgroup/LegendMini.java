@@ -56,6 +56,20 @@ class LegendMini extends View {
 		super.onDraw(canvas);
 		drawLegend(canvas);
 	}
+
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		int parentHeight = MeasureSpec.getSize(heightMeasureSpec);
+		int parentWidth = MeasureSpec.getSize(widthMeasureSpec);
+		if (parentHeight<parentWidth) {
+			int myWidth = parentWidth-parentHeight;
+			setMeasuredDimension(myWidth, parentHeight);
+		} else {
+			int myHeight = parentHeight-parentWidth;
+			setMeasuredDimension(parentWidth, myHeight);
+		}
+	}
 //ENDREGION Lifecycle
 
 	/**
@@ -69,16 +83,23 @@ class LegendMini extends View {
 		mBoxPaint.setStyle(Paint.Style.FILL);
 	}
 
-	public void setLegendType(LegendTypes type) { this.mType = type; }
+	public void setLegendType(LegendTypes type) {
+		this.mType = type;
+	}
 
 	public void setSlices(Slice[] slices) {
 		this.slices = slices;
-		legendItems = buildLegend(this.slices.length);
+		start();
 	}
 
 	public void setLegendTextSizePx(float size) {
 		this.mLegendTextSizePx = size;
 		mLegendPaint.setTextSize(size);
+		invalidate();
+	}
+
+	private void start() {
+		if (this.slices!=null) legendItems = buildLegend(this.slices.length);
 	}
 
 	/**
@@ -121,8 +142,8 @@ class LegendMini extends View {
 			float width = legendItems[i].boxrec.width()+legendItems[i].textrec.width()+ LEGEND_ITEM_BOX_MARGIN;
 			if (legendItems[i].textrec.right>getWidth()) {
 				row++;
-				legendItems[i].boxrec.offset(-totWidth, row*30 + LEGEND_ITEM_VERT_INTERLINE);
-				legendItems[i].textrec.offset(-totWidth, row*30 + LEGEND_ITEM_VERT_INTERLINE);
+				legendItems[i].boxrec.offset(-legendItems[i].boxrec.left, row*30 + LEGEND_ITEM_VERT_INTERLINE);
+				legendItems[i].textrec.offset(-totWidth-width, row*30 + LEGEND_ITEM_VERT_INTERLINE);
 			}
 			mBoxPaint.setColor(slices[i].sliceColor);
 			Utils.PVGColors.tintMyDrawable(mDropVector, slices[i].sliceColor);

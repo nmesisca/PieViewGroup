@@ -5,7 +5,7 @@ package com.chipset.pieviewgroup;
  * Copyright ® 2016. All rights reserved.
  * Last modified : 05/11/16 23:36
  */
-enum ChartTypes {
+public enum ChartTypes {
 	PIE,
 	DONUT;
 }

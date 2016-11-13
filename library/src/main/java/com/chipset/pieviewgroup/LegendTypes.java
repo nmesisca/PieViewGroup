@@ -9,5 +9,5 @@ package com.chipset.pieviewgroup;
 public enum LegendTypes {
 	NONE,
 	SHORT,
-	FULL;
+	FULL
 }

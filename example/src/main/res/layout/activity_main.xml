@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="#FFFFFF"
+    tools:context="com.chipset.pieviewgroupdemo.MainActivity">
+
+    <android.support.v7.widget.SwitchCompat
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/switch_labels"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/donut_v_legend"
+        android:layout_marginLeft="22dp"
+        android:layout_marginStart="22dp"
+        android:textAlignment="viewEnd"
+        android:gravity="end"
+        android:text="Labels"
+        android:checked="true"/>
+
+    <com.chipset.pieviewgroup.PieViewGroup
+        android:layout_width="160dp"
+        android:id="@+id/donut_v_legend"
+        android:layout_alignParentTop="true"
+        android:layout_height="220dp">
+    </com.chipset.pieviewgroup.PieViewGroup>
+
+    <com.chipset.pieviewgroup.PieViewGroup
+        android:id="@+id/donut_h_legend"
+        android:layout_height="200dp"
+        android:layout_below="@+id/donut_v_legend"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="18dp"
+        android:layout_width="340dp">
+    </com.chipset.pieviewgroup.PieViewGroup>
+
+    <android.support.v7.widget.SwitchCompat
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/switch_type"
+        android:textAlignment="viewEnd"
+        android:gravity="end"
+        android:layout_below="@+id/switch_labels"
+        android:layout_alignLeft="@+id/switch_labels"
+        android:layout_alignStart="@+id/switch_labels"
+        android:layout_marginTop="11dp"
+        android:text="Type"
+        android:layout_alignRight="@+id/switch_labels"
+        android:layout_alignEnd="@+id/switch_labels"/>
+
+    <android.support.v7.widget.SwitchCompat
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/switch_legend_type"
+        android:textAlignment="viewEnd"
+        android:gravity="end"
+        android:layout_marginTop="13dp"
+        android:text="Legend"
+        android:layout_below="@+id/switch_type"
+        android:layout_alignLeft="@+id/switch_type"
+        android:layout_alignStart="@+id/switch_type"
+        android:layout_alignRight="@+id/switch_type"
+        android:layout_alignEnd="@+id/switch_type"/>
+
+    <Spinner
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/switch_legend_type"
+        android:layout_marginTop="25dp"
+        android:id="@+id/label_size"
+        android:layout_alignRight="@+id/switch_legend_type"
+        android:layout_alignEnd="@+id/switch_legend_type"
+        android:layout_width="40dp"/>
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/label_size"
+        android:layout_marginTop="17dp"
+        android:id="@+id/legend_size"
+        android:layout_alignLeft="@+id/label_size"
+        android:layout_alignStart="@+id/label_size"
+        android:layout_alignRight="@+id/label_size"
+        android:layout_alignEnd="@+id/label_size"/>
+
+</RelativeLayout>

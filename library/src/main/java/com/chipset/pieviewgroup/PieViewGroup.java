@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 
 /*
@@ -37,6 +36,7 @@ public class PieViewGroup extends FrameLayout {
 	private PieMini pieMini;
 	private LegendMini legendMini;
 	private LegendTypes mLegendType;
+	private final static int PAD_H = 0, PAD_V = 0; // Space between child views.
 
 	public PieViewGroup(@NonNull Context context) {
 		super(context);
@@ -55,52 +55,32 @@ public class PieViewGroup extends FrameLayout {
 
 // REGION Lifecycle
 	@Override
-	protected void onLayout(boolean b, int left, int top, int right, int bottom) {
-		final int count = getChildCount();
-		int curWidth, curHeight, curLeft, curTop, maxHeight;
-
-		//get the available size of child view
-		final int childLeft = this.getPaddingLeft();
-		final int childTop = this.getPaddingTop();
-		final int childRight = this.getMeasuredWidth() - this.getPaddingRight();
-		final int childBottom = this.getMeasuredHeight() - this.getPaddingBottom();
-		final int childWidth = childRight - childLeft;
-		final int childHeight = childBottom - childTop;
-
-		maxHeight = 0;
-		curLeft = childLeft;
-		curTop = childTop;
-
-		for (int i = 0; i < count; i++) {
-			View child = getChildAt(i);
-			if (child.getVisibility() == GONE)
-				return;
-			//Get the maximum size of the child
-			child.measure(MeasureSpec.makeMeasureSpec(childWidth, MeasureSpec.AT_MOST),
-					MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.AT_MOST));
-			curWidth = child.getMeasuredWidth();
-			curHeight = child.getMeasuredHeight();
-			//wrap is reach to the end
-			if (curLeft + curWidth >= childRight) {
-				curLeft = childLeft;
-				curTop += maxHeight;
-				maxHeight = 0;
+	protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+		final int width = right - left;
+		int xpos = getPaddingLeft();
+		int ypos = getPaddingTop();
+		int height = 0;
+		for(int i = 0; i < getChildCount(); i++) {
+			final View child = getChildAt(i);
+			if(child.getVisibility() != GONE) {
+				final int childw = child.getMeasuredWidth();
+				final int childh = child.getMeasuredHeight();
+				height = Math.max(height, childh);
+				if(xpos + childw > width) {
+					xpos = getPaddingLeft();
+					ypos += height;
+				}
+				child.layout(xpos, ypos, xpos + childw, ypos + childh);
+				xpos += childw + PAD_H;
 			}
-			//do the layout
-			child.layout(curLeft, curTop, curLeft + curWidth, curTop + curHeight);
-			//store the max height
-			if (maxHeight < curHeight)
-				maxHeight = curHeight;
-			curLeft += curWidth;
 		}
 	}
 //ENDREGION Lifecycle
 
 	private void init(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
 		mContext = context;
-		pieMini = new PieMini(mContext);
+		pieMini = new PieMini(context);
 		legendMini = new LegendMini(mContext);
-
 		colorPrimary = Utils.readThemeColor(context, R.attr.colorPrimary );
 		// read attributes from XML layout
 		if (attrs != null) {
@@ -127,9 +107,13 @@ public class PieViewGroup extends FrameLayout {
 			} finally {
 				ta.recycle();
 			}
-//			pieMini.invalidate();
-//			legendMini.invalidate();
 		}
+	}
+
+	@Override
+	public void setBackgroundColor(int color) {
+		super.setBackgroundColor(color);
+		pieMini.setBackgroundColor(color);
 	}
 
 	/**
@@ -152,7 +136,7 @@ public class PieViewGroup extends FrameLayout {
 			legendMini.setSlices(this.mSlices);
 			if (getChildCount()==0) {
 				addView(pieMini);
-				addView(legendMini);
+				if (mLegendType!=LegendTypes.NONE) addView(legendMini);
 			}
 			postInvalidate();
 		}
@@ -163,7 +147,9 @@ public class PieViewGroup extends FrameLayout {
 	 *
 	 * @param type Int value : 0 for default, 1 for normal pie, 2 for donut
 	 */
-	public void setChartType (ChartTypes type) { pieMini.setChartType(type);}
+	public void setChartType (ChartTypes type) {
+		pieMini.setChartType(type);
+	}
 
 	/**
 	 * Controls the visual appearance of the legend
@@ -220,28 +206,28 @@ public class PieViewGroup extends FrameLayout {
 		Slice[] slices = new Slice[size];
 		int total = 0;
 		// checking data is valid and normalizing if necessary
-		for (Map.Entry<String, Integer> entry :	mData.entrySet())
+		for (Map.Entry<String, Integer> entry : mData.entrySet())
 			total += entry.getValue();
 		// check for user defined colors
 		// create slices and legend items
-		int i= 0;
+		int i = 0;
 		float arcStart = 0;
-		for (Map.Entry<String, Integer> entry :	mData.entrySet()) {
+		for (Map.Entry<String, Integer> entry : mData.entrySet()) {
 			final Slice slice = new Slice();
 			// normalize data if required
 			slice.label = entry.getKey();
-			slice.percent = ((total != 100) ? entry.getValue()*100/total : entry.getValue());
+			slice.percent = ((total != 100) ? entry.getValue() * 100 / total : entry.getValue());
 			//calculate start & end angle for each data value
 			final float endAngle = total == 0 ? 0 : 360 * slice.percent / (float) total;
 			final float newStartAngle = arcStart + endAngle;
 			slice.labelOffset = getTextOffset(slice.toString(), pieMini.mLabelPaint);
-			if (mColors.get(i)==0) mColors.add(Utils.PVGColors.generateRandomColor(colorPrimary));
+			if (mColors.size() == i) mColors.add(Utils.PVGColors.generateRandomColor(colorPrimary));
 			slice.sliceColor = mColors.get(i);
 			slice.labelColor = Utils.PVGColors.getContrastTextColor(slice.sliceColor);
 			slice.startDegree = arcStart;
-			slice.endDegree = arcStart+endAngle ;
+			slice.endDegree = arcStart + endAngle;
 			slice.sweepDegree = endAngle;
-			slices[i]=slice;
+			slices[i] = slice;
 			arcStart = newStartAngle;
 			++i;
 		}
@@ -266,7 +252,6 @@ public class PieViewGroup extends FrameLayout {
 	public void setSelected(boolean selected) {
 		super.setSelected(selected);
 		ObjectAnimator anim = ObjectAnimator.ofInt(pieMini, "donutRadiusPercent", 0, DONUT_RADIUS_PERCENT);
-
 		anim.setDuration(700);
 		anim.start();
 	}

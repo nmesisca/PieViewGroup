@@ -94,3 +94,5 @@ hs_err_pid*
 **/*.iml
 app/src/androidTest/
 app/src/test/
+example/src/androidTest/
+example/src/test/

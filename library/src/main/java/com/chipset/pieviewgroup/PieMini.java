@@ -33,6 +33,7 @@ class PieMini extends View {
 	private int mOuterRing = PIE_VIEW_OUTER_RING;
 	private int mPieRadius;
 	private Slice[] slices;
+	private int mBackgroundColor = Color.WHITE;
 
 	public PieMini(Context context) {
 		super(context);
@@ -41,16 +42,14 @@ class PieMini extends View {
 
 	private void init() {
 		setWillNotDraw(false);
-		// setup paints and colors
 		setPaints();
 	}
 
 // REGION Lifecycle
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		int width = getMeasuredWidth();
-		int height = getMeasuredHeight();
+		final int width = MeasureSpec.getSize(widthMeasureSpec) - getPaddingLeft() - getPaddingRight();
+		int height = MeasureSpec.getSize(heightMeasureSpec) - getPaddingTop() - getPaddingBottom();
 		int shorter = width>height ? height : width;
 		mPieRadius = (shorter-getPaddingLeft()-getPaddingRight()- mMargin*2-mOuterRing*2)/2;
 		mDonutRadius = donutRadiusPercent*mPieRadius/100;
@@ -68,20 +67,24 @@ class PieMini extends View {
 	}
 //ENDREGION Lifecycle
 
-	public Slice[] getSlices() { return slices; }
+	@Override
+	public void setBackgroundColor(int color) {
+		this.mBackgroundColor = color;
+		super.setBackgroundColor(color);
+	}
 
 	public void setSlices(Slice[] slices) { this.slices = slices; }
 
-	public void showLabels(boolean show) { this.mShowLabels = show; }
+	public void showLabels(boolean show) {
+		this.mShowLabels = show;
+		invalidate();
+	}
 
 	public void setLabelTextSizePx(float sizePx) {
 		this.mLabelTextSizePx = sizePx;
 		mLabelPaint.setTextSize(mLabelTextSizePx);
+		invalidate();
 	}
-
-	public int getDonutRadius() { return this.mDonutRadius; }
-
-	public int getDonutRadiusPercent() { return this.donutRadiusPercent; }
 
 	public void setDonutRadiusPercent(int radiusPercent) {
 		this.donutRadiusPercent=radiusPercent;
@@ -89,7 +92,10 @@ class PieMini extends View {
 		invalidate();
 	}
 
-	public void setChartType(ChartTypes type) { this.mType = type; }
+	public void setChartType(ChartTypes type) {
+		this.mType = type;
+		invalidate();
+	}
 
 	/**
 	 * Set up paints and brushes
@@ -97,8 +103,6 @@ class PieMini extends View {
 	private void setPaints() {
 		mLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		mLinePaint.setStyle(Paint.Style.STROKE);
-		mLinePaint.setColor(Color.WHITE);
-		//mLinePaint.setStrokeWidth(mChartType==2 ? 2.8f : 1.8f);
 		mLinePaint.setStrokeWidth(mType==ChartTypes.DONUT ? 2.8f : 1.8f);
 		mLinePaint.setStrokeJoin(Paint.Join.ROUND);
 		mLinePaint.setStrokeCap(Paint.Cap.ROUND);
@@ -121,11 +125,12 @@ class PieMini extends View {
 	 */
 	private void drawSlices(@NonNull Canvas canvas) {
 		if (slices != null) {
+			mLinePaint.setColor(this.mBackgroundColor);
 			for (Slice slice : slices) {
 				mPiePaint.setColor(slice.sliceColor);
 				canvas.drawArc(mPieBounds, slice.startDegree, slice.sweepDegree, true, mPiePaint);
 				if (mType==ChartTypes.DONUT) {
-					mPiePaint.setColor(Color.WHITE);
+					mPiePaint.setColor(mBackgroundColor);
 					canvas.drawCircle(mPieCenter.x, mPieCenter.y, mDonutRadius, mPiePaint);
 				}
 				drawBorders(canvas, slice.startDegree);
