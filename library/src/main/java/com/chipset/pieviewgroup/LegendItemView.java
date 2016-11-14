@@ -10,7 +10,6 @@ import android.text.TextPaint;
 import android.view.View;
 
 class LegendItemView extends View {
-
 	private static final String TAG = "LegendItemView";
 	private static final int LEGEND_ITEM_BOX_MARGIN = 12;
 	private static final int LEGEND_ITEM_BOX_SIZE_DP = 15;
