@@ -1,4 +1,4 @@
-# PieViewGroup
+# PieViewGroup  [ ![Download](https://api.bintray.com/packages/nickmesisca/Android-Controls/PieViewGroup/images/download.svg) ](https://bintray.com/nickmesisca/Android-Controls/PieViewGroup/_latestVersion)
 Quick and easy Pie chart with legend for Android API 16+
 
 #Setup
