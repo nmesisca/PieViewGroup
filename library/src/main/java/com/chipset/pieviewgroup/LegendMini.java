@@ -5,6 +5,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.text.TextPaint;
 import android.view.View;
@@ -24,6 +25,7 @@ class LegendMini extends FrameLayout {
 	private Paint mBoxPaint;
 	private float mLegendTextSizePx;
 	private LegendItem[] legendItems;
+	@Nullable
 	private Drawable icon;
 	private Context mContext;
 

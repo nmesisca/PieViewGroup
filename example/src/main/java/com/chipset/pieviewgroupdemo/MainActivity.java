@@ -1,5 +1,6 @@
 package com.chipset.pieviewgroupdemo;
 
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
@@ -16,7 +17,8 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-	private Map<String, Integer> dataSource = new HashMap<>();
+	@NonNull
+	private final Map<String, Integer> dataSource = new HashMap<>();
 
 // REGION Lifecycle
 	@Override

@@ -20,12 +20,13 @@ class PieMini extends View {
 	private static final int PIE_VIEW_OUTER_RING = 8;
 	@NonNull private final Point mPieCenter = new Point();
 	@NonNull private final RectF mPieBounds = new RectF();
-	public Paint mLabelPaint;
+
 	private float mLabelTextSizePx;
 	private int mMargin = PIE_VIEW_MARGIN;
 	private int donutRadiusPercent;
 	private int mDonutRadius = 0;
 	private boolean mShowLabels = true;
+	public Paint mLabelPaint;
 	private Paint mPiePaint;
 	private Paint mOuterPaint;
 	private Paint mLinePaint;

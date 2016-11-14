@@ -7,5 +7,5 @@ package com.chipset.pieviewgroup;
  */
 public enum ChartTypes {
 	PIE,
-	DONUT;
+	DONUT
 }
