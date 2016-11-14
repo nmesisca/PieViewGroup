@@ -20,7 +20,7 @@ compile('com.chipset:pieviewgroup:0.3.0')
               ealk:pvg_legendType="SHORT"/>
 ```
 
-##3. Reference it in your code ...
+##3. Reference it in your code
 
 ```java
           PieViewGroup pieChart = (PieViewGroup) findViewById(R.id.myPie);
