@@ -8,14 +8,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
-
 import com.chipset.pieviewgroup.ChartTypes;
 import com.chipset.pieviewgroup.LegendTypes;
 import com.chipset.pieviewgroup.PieViewGroup;
 import java.util.HashMap;
 import java.util.Map;
-
-import static android.graphics.Color.GREEN;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,11 +25,10 @@ public class MainActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_main);
 		LoadData();
 		final PieViewGroup vertDonut = (PieViewGroup) findViewById(R.id.donut_v_legend);
-		PieViewGroup horizDonut = (PieViewGroup) findViewById(R.id.donut_h_legend);
-
+		final PieViewGroup horizDonut = (PieViewGroup) findViewById(R.id.donut_h_legend);
 		final Spinner textSize = (Spinner) findViewById(R.id.label_size);
-		Integer[] items = new Integer[]{8,9,10,11,12,13,14,15};
-		ArrayAdapter<Integer> adapter1 = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item, items);
+		final Integer[] items = new Integer[]{8,9,10,11,12,13,14,15};
+		final ArrayAdapter<Integer> adapter1 = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item, items);
 		textSize.setAdapter(adapter1);
 		textSize.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override
@@ -47,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 		});
 
 		final Spinner legendSize = (Spinner) findViewById(R.id.legend_size);
-		ArrayAdapter<Integer> adapter2 = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item, items);
+		final ArrayAdapter<Integer> adapter2 = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item, items);
 		legendSize.setAdapter(adapter2);
 		legendSize.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override
@@ -65,8 +61,7 @@ public class MainActivity extends AppCompatActivity {
 		switchType.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-				if (b) vertDonut.setChartType(ChartTypes.PIE);
-				else vertDonut.setChartType(ChartTypes.DONUT);
+				vertDonut.setChartType(b ? ChartTypes.PIE : ChartTypes.DONUT);
 			}
 		});
 
@@ -74,8 +69,7 @@ public class MainActivity extends AppCompatActivity {
 		switchLabels.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-				if (b) vertDonut.showLabels(true);
-				else vertDonut.showLabels(false);
+				vertDonut.showLabels(b);
 			}
 		});
 
@@ -83,17 +77,15 @@ public class MainActivity extends AppCompatActivity {
 		switchLegend.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-				if (b) vertDonut.setLegendType(LegendTypes.SHORT);
-				else vertDonut.setLegendType(LegendTypes.FULL);
+				vertDonut.setLegendType(b ? LegendTypes.SHORT : LegendTypes.FULL);
 			}
 		});
 
 		vertDonut.showLabels(true);
-		vertDonut.setLegendType(LegendTypes.SHORT);
+		vertDonut.setLegendType(LegendTypes.FULL);
 		vertDonut.setChartType(ChartTypes.DONUT);
 		vertDonut.setData(dataSource);
 
-		horizDonut.setBackgroundColor(GREEN);
 		horizDonut.showLabels(true);
 		horizDonut.setLegendType(LegendTypes.SHORT);
 		horizDonut.setChartType(ChartTypes.DONUT);

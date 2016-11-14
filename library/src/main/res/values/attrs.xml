@@ -10,6 +10,7 @@
         <attr name="pvg_labelTextSize" format="dimension"/>
         <attr name="pvg_legendTextSize" format="dimension"/>
         <attr name="pvg_colorArray" format="reference" />
+        <attr name="pvg_legendDrawable" format="reference"/>
         <attr name="pvg_showLabels" format="boolean"/>
         <attr name="pvg_donutRadiusPercent" format="integer"/>
         <attr name="pvg_chartType" format="integer">

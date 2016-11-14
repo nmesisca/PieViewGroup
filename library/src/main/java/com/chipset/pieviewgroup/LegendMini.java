@@ -1,62 +1,73 @@
 package com.chipset.pieviewgroup;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.text.TextPaint;
 import android.view.View;
+import android.widget.FrameLayout;
 
 /*
  * Created by nmesisca on 05/11/16 18:32
  * Copyright ® 2016. All rights reserved.
  * Last modified : 05/11/16 18:32
  */
-class LegendMini extends View {
+class LegendMini extends FrameLayout {
 
-	private static final int LEGEND_ITEM_BOX_SIZE_DP = 15;
-	private static final int LEGEND_ITEM_VERT_INTERLINE = 18;
-	private static final int LEGEND_ITEM_MARGIN = 36;
-	private static final int LEGEND_ITEM_BOX_MARGIN = 12;
+	private static final int PAD_H = 22;
+	private static final int PAD_V = 20; // Space between child views.
 	private LegendTypes mType;
 	private TextPaint mLegendPaint;
 	private Paint mBoxPaint;
-	private float mLegendBoxSizePx;
 	private float mLegendTextSizePx;
 	private LegendItem[] legendItems;
-	private Slice[] slices;
-	private Drawable mDropVector;
+	private Drawable icon;
+	private Context mContext;
 
 	public LegendMini(@NonNull Context context) {
 		super(context);
 		init(context);
 	}
 
+	@Override
+	protected void onLayout(boolean b, int left, int top, int right, int bottom) {
+		final int width = right - left;
+		int xpos = getPaddingLeft();
+		int ypos = getPaddingTop();
+		int height = 0;
+		for(int i = 0; i < getChildCount(); i++) {
+			final View child = getChildAt(i);
+			if(child.getVisibility() != GONE) {
+				final int childw = child.getMeasuredWidth();
+				final int childh = child.getMeasuredHeight();
+				height = Math.max(height, childh);
+				if(xpos + childw > width) {
+					xpos = getPaddingLeft();
+					ypos += height + PAD_V;
+				}
+				child.layout(xpos, ypos, xpos + childw, ypos + childh);
+				xpos += childw + PAD_H;
+			}
+		}
+	}
+
 	private void init(@NonNull Context context) {
 		setWillNotDraw(false);
-		// initialize variables
-		if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-			mDropVector = VectorDrawableCompat.create(getResources(), R.drawable.ic_drop, context.getTheme());
-		} else {
-			mDropVector = getResources().getDrawable(R.drawable.ic_drop, context.getTheme());
-		}
-		this.mLegendBoxSizePx = Utils.PVGConvert.dp2px(context, LEGEND_ITEM_BOX_SIZE_DP);
-		// setup paints and colors
 		setPaints();
+		this.mContext = context;
+		if (this.icon==null) {
+			if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+				this.icon = VectorDrawableCompat.create(getResources(), R.drawable.ic_drop, context.getTheme());
+			} else {
+				this.icon = getResources().getDrawable(R.drawable.ic_drop, context.getTheme());
+			}
+		}
 	}
 
 // REGION Lifecycle
-	@Override
-	protected void onDraw(@NonNull Canvas canvas) {
-		super.onDraw(canvas);
-		drawLegend(canvas);
-	}
-
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -83,74 +94,41 @@ class LegendMini extends View {
 		mBoxPaint.setStyle(Paint.Style.FILL);
 	}
 
-	public void setLegendType(LegendTypes type) {
-		this.mType = type;
+	public void setLegendDrawable(Drawable icon) {
+		this.icon = icon;
+		start();
 	}
 
-	public void setSlices(Slice[] slices) {
-		this.slices = slices;
+	public void setLegendType(LegendTypes type) {
+		this.mType = type;
+		start();
+	}
+
+	public void setLegendItems(LegendItem[] legendItems) {
+		this.legendItems = legendItems;
 		start();
 	}
 
 	public void setLegendTextSizePx(float size) {
 		this.mLegendTextSizePx = size;
-		mLegendPaint.setTextSize(size);
-		invalidate();
+		this.mLegendPaint.setTextSize(size);
+		start();
 	}
 
 	private void start() {
-		if (this.slices!=null) legendItems = buildLegend(this.slices.length);
+		if (this.legendItems!=null) buildLegendViews();
 	}
 
-	/**
-	 * Calculate an array of LegendItem
-	 */
-	@NonNull
-	private LegendItem[] buildLegend(int size) {
-		LegendItem[] items = new LegendItem[size];
-		int totWidth = 0;
-		for (int i=0; i<slices.length; i++) {
-			final LegendItem legendItem = new LegendItem();
-			legendItem.percent = slices[i].percent;
-			legendItem.text = mType == LegendTypes.FULL ? String.format("%s : %d%%", slices[i].label,
-					legendItem.percent) :  slices[i].label;
-			Rect bounds = new Rect();
-			mLegendPaint.getTextBounds(legendItem.text, 0, legendItem.text.length(), bounds);
-			float itemSize = mLegendBoxSizePx + bounds.width() + LEGEND_ITEM_BOX_MARGIN;
-			RectF box_bounds = new RectF(0, 0, mLegendBoxSizePx, mLegendBoxSizePx );
-			RectF text_bounds = new RectF(0,bounds.height(),bounds.width(),0);
-			box_bounds.offset(totWidth, LEGEND_ITEM_VERT_INTERLINE);
-			text_bounds.offset(box_bounds.right + LEGEND_ITEM_BOX_MARGIN, LEGEND_ITEM_VERT_INTERLINE);
-			legendItem.boxrec = box_bounds;
-			legendItem.textrec = text_bounds;
-			items[i]=legendItem;
-			if (legendItem.percent!=0) totWidth += itemSize+LEGEND_ITEM_MARGIN;
-		}
-		return items;
-	}
-
-	/**
-	 * Draw the Legend of the chart
-	 *
-	 * @param canvas Canvas on which to draw
-	 */
-	private void drawLegend(@NonNull Canvas canvas) {
-		float totWidth = 0;
-		int row = 0;
-		for (int i=0; i<legendItems.length; i++) {
-			if (legendItems[i].percent == 0) continue;
-			float width = legendItems[i].boxrec.width()+legendItems[i].textrec.width()+ LEGEND_ITEM_BOX_MARGIN;
-			if (legendItems[i].textrec.right>getWidth()) {
-				row++;
-				legendItems[i].boxrec.offset(-legendItems[i].boxrec.left, row*30 + LEGEND_ITEM_VERT_INTERLINE);
-				legendItems[i].textrec.offset(-totWidth-width, row*30 + LEGEND_ITEM_VERT_INTERLINE);
+	private void buildLegendViews() {
+		removeAllViews();
+		for (LegendItem item : legendItems) {
+			if (item.percent!=0) {
+				item.icon=this.icon;
+//				item.text = mType == LegendTypes.FULL ? String.format("%s : %d%%", item.text,
+//						item.percent) :  item.text;
+				LegendItemView itemView = new LegendItemView(mContext, item, mBoxPaint, mLegendPaint);
+				addView(itemView);
 			}
-			mBoxPaint.setColor(slices[i].sliceColor);
-			Utils.PVGColors.tintMyDrawable(mDropVector, slices[i].sliceColor);
-			canvas.drawBitmap(Utils.getBitmapFromVectorDrawable(mDropVector), null, legendItems[i].boxrec, null);
-			canvas.drawText(legendItems[i].text, legendItems[i].textrec.left,
-					legendItems[i].textrec.top, mLegendPaint);
-			totWidth += width;
 		}
 	}
 }

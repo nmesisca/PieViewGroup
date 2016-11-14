@@ -28,6 +28,9 @@ public class PieViewGroup extends FrameLayout {
 	private static final int LABEL_TEXT_SIZE_SP = 12;
 	private static final boolean PIE_SHOW_LABELS = true;
 	private static final int DONUT_RADIUS_PERCENT = 43;
+	private static final int PAD_H = 0;
+	private static final int PAD_V = 0; // Space between child views.
+
 	@Nullable private Map<String, Integer> mData;
 	private Context mContext;
 	private int colorPrimary;
@@ -36,21 +39,15 @@ public class PieViewGroup extends FrameLayout {
 	private PieMini pieMini;
 	private LegendMini legendMini;
 	private LegendTypes mLegendType;
-	private final static int PAD_H = 0, PAD_V = 0; // Space between child views.
 
 	public PieViewGroup(@NonNull Context context) {
 		super(context);
-		init(context, null, 0);
+		init(context, null);
 	}
 
 	public PieViewGroup(@NonNull Context context, AttributeSet attrs) {
 		super(context, attrs);
-		init(context, attrs, 0);
-	}
-
-	public PieViewGroup(@NonNull Context context, AttributeSet attrs, int defStyleAttr) {
-		super(context, attrs, defStyleAttr);
-		init(context, attrs, defStyleAttr);
+		init(context, attrs);
 	}
 
 // REGION Lifecycle
@@ -77,7 +74,13 @@ public class PieViewGroup extends FrameLayout {
 	}
 //ENDREGION Lifecycle
 
-	private void init(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+	/**
+	 * Initiate variables and read from xml attribs
+	 *
+	 * @param context The context object from constructor
+	 * @param attrs The Attributes from constructor
+	 */
+	private void init(@NonNull Context context, @Nullable AttributeSet attrs) {
 		mContext = context;
 		pieMini = new PieMini(context);
 		legendMini = new LegendMini(mContext);
@@ -99,7 +102,7 @@ public class PieViewGroup extends FrameLayout {
 				legendMini.setLegendType(LegendTypes.values()[ltype]);
 				if (colorsId != 0) {
 					Log.e(TAG, "Colors from XML");
-					int[] y = getResources().getIntArray(colorsId);
+					final int[] y = getResources().getIntArray(colorsId);
 					for (Integer color: y) {
 						mColors.add(color);
 					}
@@ -110,6 +113,11 @@ public class PieViewGroup extends FrameLayout {
 		}
 	}
 
+	/**
+	 * Override to pass Background color to the PieMini object
+	 *
+	 * @param color The new background color
+	 */
 	@Override
 	public void setBackgroundColor(int color) {
 		super.setBackgroundColor(color);
@@ -133,7 +141,7 @@ public class PieViewGroup extends FrameLayout {
 			this.mData = data;
 			this.mSlices = buildSlices(data.size());
 			pieMini.setSlices(this.mSlices);
-			legendMini.setSlices(this.mSlices);
+			legendMini.setLegendItems(buildLegendItems());
 			if (getChildCount()==0) {
 				addView(pieMini);
 				if (mLegendType!=LegendTypes.NONE) addView(legendMini);
@@ -145,7 +153,7 @@ public class PieViewGroup extends FrameLayout {
 	/**
 	 * Control the visual appearance of the chart
 	 *
-	 * @param type Int value : 0 for default, 1 for normal pie, 2 for donut
+	 * @param type ChartType enum value : 0 for PIE, 1 for DONUT
 	 */
 	public void setChartType (ChartTypes type) {
 		pieMini.setChartType(type);
@@ -196,19 +204,18 @@ public class PieViewGroup extends FrameLayout {
 	}
 
 	/**
-	 * Calculate an array of Slices
+	 * Build the slices that compose the Pie chart, in the form of an array of Slice objects
 	 *
 	 * @param size The maximum number of elements the array will contain
 	 * @return The resulting array of Slice objects
 	 */
 	@NonNull
 	private Slice[] buildSlices(int size) {
-		Slice[] slices = new Slice[size];
+		final Slice[] slices = new Slice[size];
 		int total = 0;
 		// checking data is valid and normalizing if necessary
 		for (Map.Entry<String, Integer> entry : mData.entrySet())
 			total += entry.getValue();
-		// check for user defined colors
 		// create slices and legend items
 		int i = 0;
 		float arcStart = 0;
@@ -235,7 +242,25 @@ public class PieViewGroup extends FrameLayout {
 	}
 
 	/**
-	 * Measures the length of a string as it will be laid out
+	 * Build the legend items in the form of an array of LegendItems from the Slice objects
+	 *
+	 * @return The array of LegendItem objects
+	 */
+	@NonNull
+	private LegendItem[] buildLegendItems() {
+		final LegendItem[] items = new LegendItem[mSlices.length];
+		for(int i=0; i<mSlices.length;i++) {
+			final LegendItem item = new LegendItem();
+			item.text = mSlices[i].label;
+			item.percent = mSlices[i].percent;
+			item.color = mSlices[i].sliceColor;
+			items[i]=item;
+		}
+		return items;
+	}
+
+	/**
+	 * Measure the length of a string as it will be laid out
 	 *
 	 * @param text The string to be measured
 	 * @param paint The paint that will be used to draw the string
@@ -243,7 +268,7 @@ public class PieViewGroup extends FrameLayout {
 	 */
 	@NonNull
 	private Point getTextOffset(@NonNull String text, @NonNull Paint paint) {
-		Rect bounds = new Rect();
+		final Rect bounds = new Rect();
 		paint.getTextBounds(text, 0, text.length(), bounds);
 		return new Point((bounds.left + bounds.width())/2, (bounds.bottom + bounds.height())/2);
 	}
@@ -251,7 +276,7 @@ public class PieViewGroup extends FrameLayout {
 	@Override
 	public void setSelected(boolean selected) {
 		super.setSelected(selected);
-		ObjectAnimator anim = ObjectAnimator.ofInt(pieMini, "donutRadiusPercent", 0, DONUT_RADIUS_PERCENT);
+		final ObjectAnimator anim = ObjectAnimator.ofInt(pieMini, "donutRadiusPercent", 0, DONUT_RADIUS_PERCENT);
 		anim.setDuration(700);
 		anim.start();
 	}

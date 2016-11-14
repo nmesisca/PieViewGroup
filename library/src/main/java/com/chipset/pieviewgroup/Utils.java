@@ -10,7 +10,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.widget.AppCompatDrawableManager;
 import android.util.TypedValue;
 import java.util.Random;
 
@@ -31,27 +30,13 @@ class Utils {
 		return color;
 	}
 
-	static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
-		Drawable drawable = AppCompatDrawableManager.get().getDrawable(context, drawableId);
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-			drawable = (DrawableCompat.wrap(drawable)).mutate();
-		}
-
-		Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-				drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-		Canvas canvas = new Canvas(bitmap);
-		drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-		drawable.draw(canvas);
-		return bitmap;
-	}
-
 	static Bitmap getBitmapFromVectorDrawable(Drawable drawable) {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
 			drawable = (DrawableCompat.wrap(drawable)).mutate();
 		}
-		Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+		final Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
 				drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-		Canvas canvas = new Canvas(bitmap);
+		final Canvas canvas = new Canvas(bitmap);
 		drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
 		drawable.draw(canvas);
 		return bitmap;
@@ -73,18 +58,18 @@ class Utils {
 			return Color.argb(255, red, green, blue);
 		}
 
-		static Drawable tintMyDrawable(Drawable drawable, int color) {
+		static void tintMyDrawable(Drawable drawable, int color) {
+			drawable = drawable.mutate();
 			drawable = DrawableCompat.wrap(drawable);
 			DrawableCompat.setTint(drawable, color);
 			DrawableCompat.setTintMode(drawable, PorterDuff.Mode.SRC_IN);
-			return drawable;
 		}
 
 		static int getContrastTextColor(int colorIntValue) {
-			int red = Color.red(colorIntValue);
-			int green = Color.green(colorIntValue);
-			int blue = Color.blue(colorIntValue);
-			double lum = (((0.299 * red) + ((0.587 * green) + (0.114 * blue))));
+			final int red = Color.red(colorIntValue);
+			final int green = Color.green(colorIntValue);
+			final int blue = Color.blue(colorIntValue);
+			final double lum = (((0.299 * red) + ((0.587 * green) + (0.114 * blue))));
 			return lum > 186 ? 0xFF000000 : 0xFFFFFFFF;
 		}
 	}

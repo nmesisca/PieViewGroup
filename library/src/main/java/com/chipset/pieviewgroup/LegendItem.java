@@ -1,6 +1,6 @@
 package com.chipset.pieviewgroup;
 
-import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 
 /*
  * Created by nmesisca on 05/11/16 18:36
@@ -11,6 +11,6 @@ class LegendItem {
 
 	String text;
 	int percent;
-	RectF boxrec;
-	RectF textrec;
+	int color;
+	Drawable icon;
 }
