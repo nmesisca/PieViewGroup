@@ -2,10 +2,20 @@
 Quick and easy Pie chart with legend for Android API 16+
 
 #Setup
-##1. Provide the gradle dependency
+##1. Provide the gradle dependency in your module-level gradle.build file
 
 ```gradle
 compile('com.chipset:pieviewgroup:0.3.0')
+```
+
+Make sure the 'repositories' section in your project-level gradle.build file
+
+```gradle
+          ...
+          repositories {
+               jcenter()
+          }
+          ...
 ```
 
 ##2. Add it to your layout
