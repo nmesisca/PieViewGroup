@@ -8,7 +8,7 @@ Quick and easy Pie chart with legend for Android API 16+
 compile('com.chipset:pieviewgroup:0.3.0')
 ```
 
-Make sure the 'repositories' section in your project-level gradle.build file
+Make sure the 'repositories' section in your project-level gradle.build file contains
 
 ```gradle
           ...
