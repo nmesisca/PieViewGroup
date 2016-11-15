@@ -12,12 +12,18 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable false
+            zipAlignEnabled true
+        }
+        debug {
+            debuggable true
+            minifyEnabled false
+            zipAlignEnabled false
         }
     }
 }
@@ -27,7 +33,9 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:appcompat-v7:25.0.1'
     testCompile 'junit:junit:4.12'
+//    debugCompile project(path: ':library', configuration: 'debug')
+//    releaseCompile project(path: ':library', configuration: 'release')
     compile project(':library')
 }

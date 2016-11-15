@@ -97,7 +97,7 @@ class Utils {
 		}
 
 		/**
-		 * Convert from PX to DP
+		 * Convert from PX to DIP
 		 */
 		static float px2dp(@NonNull Context context, float value) {
 			return value / context.getResources().getDisplayMetrics().density;

@@ -20,13 +20,10 @@ class LegendMini extends FrameLayout {
 
 	private static final int PAD_H = 22;
 	private static final int PAD_V = 20; // Space between child views.
-	private LegendTypes mType;
 	private TextPaint mLegendPaint;
 	private Paint mBoxPaint;
 	private float mLegendTextSizePx;
 	private LegendItem[] legendItems;
-	@Nullable
-	private Drawable icon;
 	private Context mContext;
 
 	public LegendMini(@NonNull Context context) {
@@ -60,13 +57,6 @@ class LegendMini extends FrameLayout {
 		setWillNotDraw(false);
 		setPaints();
 		this.mContext = context;
-		if (this.icon==null) {
-			if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-				this.icon = VectorDrawableCompat.create(getResources(), R.drawable.ic_drop, context.getTheme());
-			} else {
-				this.icon = getResources().getDrawable(R.drawable.ic_drop, context.getTheme());
-			}
-		}
 	}
 
 // REGION Lifecycle
@@ -96,15 +86,10 @@ class LegendMini extends FrameLayout {
 		mBoxPaint.setStyle(Paint.Style.FILL);
 	}
 
-	public void setLegendDrawable(Drawable icon) {
-		this.icon = icon;
-		start();
-	}
-
-	public void setLegendType(LegendTypes type) {
-		this.mType = type;
-		start();
-	}
+//	public void setLegendType(LegendTypes type) {
+//		this.mType = type;
+//		start();
+//	}
 
 	public void setLegendItems(LegendItem[] legendItems) {
 		this.legendItems = legendItems;
@@ -125,9 +110,6 @@ class LegendMini extends FrameLayout {
 		removeAllViews();
 		for (LegendItem item : legendItems) {
 			if (item.percent!=0) {
-				item.icon=this.icon;
-//				item.text = mType == LegendTypes.FULL ? String.format("%s : %d%%", item.text,
-//						item.percent) :  item.text;
 				LegendItemView itemView = new LegendItemView(mContext, item, mBoxPaint, mLegendPaint);
 				addView(itemView);
 			}

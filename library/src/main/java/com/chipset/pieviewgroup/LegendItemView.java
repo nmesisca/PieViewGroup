@@ -31,7 +31,6 @@ class LegendItemView extends View {
 		this.item = item;
 		this.mBoxPaint = boxPaint;
 		this.mTextPaint = textPaint;
-		Utils.PVGColors.tintMyDrawable(this.item.icon, this.item.color);
 		this.mLegendBoxSizePx = Utils.PVGConvert.dp2px(context, LEGEND_ITEM_BOX_SIZE_DP);
 		buildView();
 	}
