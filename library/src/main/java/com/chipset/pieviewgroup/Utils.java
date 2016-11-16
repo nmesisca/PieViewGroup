@@ -59,10 +59,8 @@ class Utils {
 		}
 
 		static void tintMyDrawable(Drawable drawable, int color) {
-			drawable = drawable.mutate();
 			drawable = DrawableCompat.wrap(drawable);
-			DrawableCompat.setTint(drawable, color);
-			DrawableCompat.setTintMode(drawable, PorterDuff.Mode.SRC_IN);
+			DrawableCompat.setTint(drawable.mutate(), color);
 		}
 
 		static int getContrastTextColor(int colorIntValue) {

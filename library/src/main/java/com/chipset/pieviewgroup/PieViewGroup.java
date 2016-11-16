@@ -6,11 +6,8 @@ import android.content.res.TypedArray;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.graphics.drawable.VectorDrawableCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -42,7 +39,7 @@ public class PieViewGroup extends FrameLayout {
 	private PieMini pieMini;
 	private LegendMini legendMini;
 	private LegendTypes mLegendType = LegendTypes.SHORT;
-	private Drawable mLegendDrawable;
+	private int mLegendDrawableId;
 
 	public PieViewGroup(@NonNull Context context) {
 		super(context);
@@ -89,11 +86,6 @@ public class PieViewGroup extends FrameLayout {
 		pieMini = new PieMini(context);
 		legendMini = new LegendMini(mContext);
 		colorPrimary = Utils.readThemeColor(context, R.attr.colorPrimary );
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			this.mLegendDrawable = getResources().getDrawable(R.drawable.ic_drop, context.getTheme());
-		} else {
-			this.mLegendDrawable = VectorDrawableCompat.create(getResources(), R.drawable.ic_drop, context.getTheme());
-		}
 		// read attributes from XML layout
 		ReadAttrs(attrs);
 	}
@@ -163,18 +155,13 @@ public class PieViewGroup extends FrameLayout {
 		}
 	}
 
-	public void setLegendDrawable(Drawable icon) {
-		if (icon!=null)	this.mLegendDrawable = icon;
-	}
-
+	/**
+	 * Injects a drawable resource as legend marker
+	 *
+	 * @param iconId The resource id of the drawable to inject
+	 */
 	public void setLegendDrawableId(int iconId) {
-		if (iconId!=0) {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-				this.mLegendDrawable = getResources().getDrawable(iconId, mContext.getTheme());
-			} else {
-				this.mLegendDrawable = VectorDrawableCompat.create(getResources(), iconId, mContext.getTheme());
-			}
-		}
+		if (iconId!=0) this.mLegendDrawableId = iconId;
 	}
 
 	/**
@@ -193,7 +180,6 @@ public class PieViewGroup extends FrameLayout {
 	 */
 	public void setLegendType (LegendTypes type) {
 		this.mLegendType = type;
-		//legendMini.setLegendType(type);
 	}
 
 	/**
@@ -280,17 +266,11 @@ public class PieViewGroup extends FrameLayout {
 		final LegendItem[] items = new LegendItem[mSlices.length];
 		for(int i=0; i<mSlices.length; i++) {
 			final LegendItem item = new LegendItem();
-			//item.text = mSlices[i].label;
+			item.iconid = mLegendDrawableId==0 ? R.drawable.ic_drop : mLegendDrawableId;
 			item.percent = mSlices[i].percent;
 			item.text = mLegendType == LegendTypes.FULL ? String.format("%s : %d%%", mSlices[i].label,
 					item.percent) :  mSlices[i].label;
 			item.color = mSlices[i].sliceColor;
-			item.icon = this.mLegendDrawable;
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-				item.icon.setTint(item.color);
-			} else {
-				Utils.PVGColors.tintMyDrawable(item.icon, item.color);
-			}
 			items[i]=item;
 		}
 		return items;

@@ -12,5 +12,5 @@ class LegendItem {
 	String text;
 	int percent;
 	int color;
-	Drawable icon;
+	int iconid;
 }
