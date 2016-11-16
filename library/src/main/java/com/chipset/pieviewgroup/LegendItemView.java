@@ -62,7 +62,7 @@ class LegendItemView extends View {
 		//float itemSize = mLegendBoxSizePx + bounds.width() + LEGEND_ITEM_BOX_MARGIN;
 		box_bounds = new RectF(0, 0, mLegendBoxSizePx, mLegendBoxSizePx );
 		text_bounds = new RectF(0,bounds.height(),bounds.width(),0);
-		text_bounds.offset(box_bounds.right + LEGEND_ITEM_BOX_MARGIN, 0);
+		text_bounds.offset(box_bounds.right + LEGEND_ITEM_BOX_MARGIN, (bounds.height()-mLegendBoxSizePx)/-2);
 		this.itemSize = (int)(box_bounds.width()+text_bounds.width()+ LEGEND_ITEM_BOX_MARGIN + LEGEND_ITEM_MARGIN);
 	}
 }
