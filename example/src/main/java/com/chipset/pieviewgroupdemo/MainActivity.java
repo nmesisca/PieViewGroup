@@ -85,8 +85,14 @@ public class MainActivity extends AppCompatActivity {
 
 		vertDonut.showLabels(true);
 		vertDonut.setLegendDrawableId(R.drawable.ic_star_black_24dp);
-		vertDonut.setLegendType(LegendTypes.FULL);
+		//vertDonut.setLegendType(LegendTypes.NONE);
 		vertDonut.setChartType(ChartTypes.DONUT);
+		vertDonut.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				vertDonut.setSelected(!vertDonut.isSelected());
+			}
+		});
 		vertDonut.setData(dataSource);
 
 		horizDonut.showLabels(true);

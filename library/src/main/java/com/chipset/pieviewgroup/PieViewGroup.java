@@ -1,6 +1,5 @@
 package com.chipset.pieviewgroup;
 
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Paint;
@@ -29,7 +28,7 @@ public class PieViewGroup extends FrameLayout {
 	private static final boolean PIE_SHOW_LABELS = true;
 	private static final int DONUT_RADIUS_PERCENT = 43;
 	private static final int PAD_H = 0;
-	private static final int PAD_V = 0; // Space between child views.
+	private static final int PAD_V = 4; // Space between child views.
 
 	@Nullable private Map<String, Integer> mData;
 	private Context mContext;
@@ -38,7 +37,8 @@ public class PieViewGroup extends FrameLayout {
 	private Slice[] mSlices;
 	private PieMini pieMini;
 	private LegendMini legendMini;
-	private LegendTypes mLegendType = LegendTypes.SHORT;
+	private LegendTypes mLegendType;
+	private ChartTypes mChartType;
 	private int mLegendDrawableId;
 
 	public PieViewGroup(@NonNull Context context) {
@@ -66,7 +66,7 @@ public class PieViewGroup extends FrameLayout {
 				height = Math.max(height, childh);
 				if(xpos + childw > width) {
 					xpos = getPaddingLeft();
-					ypos += height;
+					ypos += height + PAD_V;
 				}
 				child.layout(xpos, ypos, xpos + childw, ypos + childh);
 				xpos += childw + PAD_H;
@@ -144,15 +144,22 @@ public class PieViewGroup extends FrameLayout {
 	public void setData(@NonNull Map<String, Integer> data) {
 		if (!data.isEmpty()) {
 			this.mData = data;
-			this.mSlices = buildSlices(data.size());
+			this.mSlices = buildSlices();
 			pieMini.setSlices(this.mSlices);
-			legendMini.setLegendItems(buildLegendItems());
-			if (getChildCount()==0) {
-				addView(pieMini);
-				if (mLegendType!=LegendTypes.NONE) addView(legendMini);
-			}
-			postInvalidate();
+			removeAllViews();
+			addView(pieMini);
+			start();
 		}
+	}
+
+	private void start() {
+		this.legendMini.setLegendItems(buildLegendItems());
+		if (getChildCount()>0) {
+			for(int i=0; i<getChildCount(); i++) {
+				if (getChildAt(i) instanceof LegendMini) removeViewAt(i);
+			}
+		}
+		if (this.mLegendType!=LegendTypes.NONE) addView(this.legendMini);
 	}
 
 	/**
@@ -161,7 +168,10 @@ public class PieViewGroup extends FrameLayout {
 	 * @param iconId The resource id of the drawable to inject
 	 */
 	public void setLegendDrawableId(int iconId) {
-		if (iconId!=0) this.mLegendDrawableId = iconId;
+		if (iconId!=0) {
+			this.mLegendDrawableId = iconId;
+			legendMini.setLegendDrawableId(iconId);
+		}
 	}
 
 	/**
@@ -170,6 +180,7 @@ public class PieViewGroup extends FrameLayout {
 	 * @param type ChartType enum value : 0 for PIE, 1 for DONUT
 	 */
 	public void setChartType (ChartTypes type) {
+		this.mChartType = type;
 		pieMini.setChartType(type);
 	}
 
@@ -206,7 +217,9 @@ public class PieViewGroup extends FrameLayout {
 	 * @param textSize size (in sp) of the text for the LegendItems
 	 */
 	public void setLegendTextSizeSp(float textSize) {
-		if (textSize>0) legendMini.setLegendTextSizePx(Utils.PVGConvert.sp2px(mContext, textSize));
+		if (textSize>0) {
+			legendMini.setLegendTextSizePx(Utils.PVGConvert.sp2px(mContext, textSize));
+		}
 	}
 
 	/**
@@ -221,12 +234,11 @@ public class PieViewGroup extends FrameLayout {
 	/**
 	 * Build the slices that compose the Pie chart, in the form of an array of Slice objects
 	 *
-	 * @param size The maximum number of elements the array will contain
 	 * @return The resulting array of Slice objects
 	 */
 	@NonNull
-	private Slice[] buildSlices(int size) {
-		final Slice[] slices = new Slice[size];
+	private Slice[] buildSlices() {
+		final Slice[] slices = new Slice[mData.size()];
 		int total = 0;
 		// checking data is valid and normalizing if necessary
 		for (Map.Entry<String, Integer> entry : mData.entrySet())
@@ -293,8 +305,13 @@ public class PieViewGroup extends FrameLayout {
 	@Override
 	public void setSelected(boolean selected) {
 		super.setSelected(selected);
-		final ObjectAnimator anim = ObjectAnimator.ofInt(pieMini, "donutRadiusPercent", 0, DONUT_RADIUS_PERCENT);
-		anim.setDuration(700);
-		anim.start();
+//		ObjectAnimator anim;
+//		if (this.mChartType == ChartTypes.DONUT)
+//			anim = ObjectAnimator.ofInt(pieMini, "donutRadiusPercent", DONUT_RADIUS_PERCENT, 0);
+//		else
+//			anim = ObjectAnimator.ofInt(pieMini, "donutRadiusPercent", 0, DONUT_RADIUS_PERCENT);
+//		anim.setDuration(600);
+//		anim.end();
+//		anim.start();
 	}
 }

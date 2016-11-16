@@ -21,6 +21,7 @@ class LegendMini extends FrameLayout {
 	private float mLegendTextSizePx;
 	private LegendItem[] legendItems;
 	private Context mContext;
+	private int mIconId=0;
 
 	public LegendMini(@NonNull Context context) {
 		super(context);
@@ -93,6 +94,11 @@ class LegendMini extends FrameLayout {
 		start();
 	}
 
+	public void setLegendDrawableId(int iconId) {
+		this.mIconId=iconId;
+		start();
+	}
+
 	private void start() {
 		if (this.legendItems!=null) buildLegendViews();
 	}
@@ -101,6 +107,7 @@ class LegendMini extends FrameLayout {
 		removeAllViews();
 		for (LegendItem item : legendItems) {
 			if (item.percent!=0) {
+				item.iconid = this.mIconId == 0 ? item.iconid : this.mIconId;
 				LegendItemView itemView = new LegendItemView(mContext, item, mBoxPaint, mLegendPaint);
 				addView(itemView);
 			}
