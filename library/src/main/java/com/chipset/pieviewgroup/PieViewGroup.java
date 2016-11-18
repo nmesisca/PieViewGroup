@@ -26,7 +26,6 @@ public class PieViewGroup extends FrameLayout {
 
 	private static final String TAG = "PieViewGroup";
 	// defaults
-
 	private static final int LEGEND_TEXT_SIZE_SP = 14;
 	private static final int LABEL_TEXT_SIZE_SP = 12;
 	private static final boolean PIE_SHOW_LABELS = true;
@@ -119,6 +118,9 @@ public class PieViewGroup extends FrameLayout {
 		}
 	}
 
+	/**
+	 * Builds the PieViewGroup
+	 */
 	public void build() {
 		Slice[] slices = buildSlices();
 		pieMini.setSlices(slices);
@@ -129,6 +131,12 @@ public class PieViewGroup extends FrameLayout {
 		addView(this.legendMini);
 	}
 
+	/**
+	 * Adaptive colors are created to be in a similar tonality as the colorPrimary defined in
+	 * the app's theme
+	 *
+	 * @param adaptive True for Adaptive colors, false for random colors
+	 */
 	public void setAdaptiveColorsEnabled(boolean adaptive) { this.mAdaptiveColors = adaptive; }
 
 	/**
@@ -239,13 +247,8 @@ public class PieViewGroup extends FrameLayout {
 	 * @param typeface The typeface to use
 	 */
 	public void setLegendTypeface(@Nullable Typeface typeface) {
-		if (typeface==null) return;
 		legendMini.mLegendTypeface = typeface;
 		legendMini.buildLegendViews();
-	}
-
-	public ArrayList<LegendItemView> getLegendItemViews() {
-		return (legendMini != null ? legendMini.legendItemsViews : null);
 	}
 
 	/**

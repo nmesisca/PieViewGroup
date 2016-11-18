@@ -76,23 +76,43 @@ class PieMini extends View {
 
 	public void setSlices(Slice[] slices) { this.slices = slices; }
 
+	/**
+	 * Control whether the labels are visible or not.
+	 *
+	 * @param show true if the labels should be visible, false otherwise
+	 */
 	public void showLabels(boolean show) {
 		this.mShowLabels = show;
 		invalidate();
 	}
 
+	/**
+	 * Control the size of the text in the labels.
+	 *
+	 * @param sizePx size (in pixels) of the text for the labels
+	 */
 	public void setLabelTextSizePx(float sizePx) {
 		this.mLabelTextSizePx = sizePx;
 		mLabelPaint.setTextSize(mLabelTextSizePx);
 		invalidate();
 	}
 
-	public void setDonutRadiusPercent(int radiusPercent) {
-		this.donutRadiusPercent=radiusPercent;
+	/**
+	 * Control the size of the donut hole, in percentage of the pie's radius
+	 *
+	 * @param percent The percentage of the pie's radius that will be the donut radius
+	 */
+	public void setDonutRadiusPercent(int percent) {
+		this.donutRadiusPercent = percent;
 		mDonutRadius = donutRadiusPercent*mPieRadius/100;
 		invalidate();
 	}
 
+	/**
+	 * Control the visual appearance of the chart
+	 *
+	 * @param type 0 for PIE chart, 1 for DONUT chart
+	 */
 	public void setChartType(ChartTypes type) {
 		this.mType = type;
 		invalidate();

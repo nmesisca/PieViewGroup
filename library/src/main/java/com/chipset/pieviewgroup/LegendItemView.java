@@ -39,7 +39,7 @@ public class LegendItemView extends AppCompatTextView {
 		Drawable start, end;
 		// Account for RTL and
 		if (item.iconid==0) {
-			final ShapeDrawable marker = createMarker(item.color);
+			final Drawable marker = createMarker(item.color);
 			start = rtl ? null : marker;
 			end = rtl ? marker : null;
 		} else {
@@ -47,14 +47,14 @@ public class LegendItemView extends AppCompatTextView {
 			final AppCompatDrawableManager dm = AppCompatDrawableManager.get();
 			start = rtl ? null : dm.getDrawable(context, item.iconid);
 			end = rtl ? dm.getDrawable(context, item.iconid) : null;
+			Utils.PVGColors.tintMyDrawable(start, item.color);
 		}
-		// tint and apply the compound Drawables
-		Utils.PVGColors.tintMyDrawable(start, item.color);
+		// apply the compound Drawables
 		setCompoundDrawablesWithIntrinsicBounds(start, null, end, null);
 	}
 
 	@NonNull
-	private ShapeDrawable createMarker(int color) {
+	private Drawable createMarker(int color) {
 		int size = (int) Utils.PVGConvert.dp2px(mContext, LEGEND_ITEM_BOX_SIZE_DP);
 		ShapeDrawable marker = new ShapeDrawable (new RectShape());
 		marker.setIntrinsicWidth (size);

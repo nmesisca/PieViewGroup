@@ -38,4 +38,5 @@ dependencies {
 //    debugCompile project(path: ':library', configuration: 'debug')
 //    releaseCompile project(path: ':library', configuration: 'release')
     compile project(':library')
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 }

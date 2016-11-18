@@ -24,7 +24,6 @@ class LegendMini extends FrameLayout {
 	public float mLegendTextSize;
 	public Slice[] mSlices;
 	private ArrayList<LegendItem> legendItems;
-	public ArrayList<LegendItemView> legendItemsViews;
 	private Context mContext;
 
 	public LegendMini(@NonNull Context context) {
@@ -70,6 +69,9 @@ class LegendMini extends FrameLayout {
 	}
 //ENDREGION Lifecycle
 
+	/**
+	 * Builds the Legend
+	 */
 	public void build() {
 		if (mSlices==null || mSlices.length==0) return;
 		this.legendItems = buildLegendItems();
@@ -83,7 +85,6 @@ class LegendMini extends FrameLayout {
 	 */
 	@NonNull
 	private ArrayList<LegendItem> buildLegendItems() {
-
 		final ArrayList<LegendItem> items = new ArrayList<>();
 		for(Slice slice : mSlices) {
 			final LegendItem item = new LegendItem();
@@ -96,9 +97,11 @@ class LegendMini extends FrameLayout {
 		return items;
 	}
 
+	/**
+	 * Builds the legend's Views and attaches the to the hierarchy
+	 */
 	public void buildLegendViews() {
 		removeAllViews();
-		legendItemsViews = new ArrayList<>();
 		for (LegendItem item: legendItems) {
 			if (item.percent!=0) {
 				item.textsize = this.mLegendTextSize;
@@ -106,7 +109,6 @@ class LegendMini extends FrameLayout {
 				item.iconid = this.mIconId;
 				final LegendItemView itemView = new LegendItemView(mContext, item);
 				addView(itemView);
-				legendItemsViews.add(itemView);
 			}
 		}
 	}

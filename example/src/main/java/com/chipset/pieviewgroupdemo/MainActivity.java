@@ -1,6 +1,5 @@
 package com.chipset.pieviewgroupdemo;
 
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -9,14 +8,11 @@ import android.support.v7.widget.SwitchCompat;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 import com.chipset.pieviewgroup.ChartTypes;
-import com.chipset.pieviewgroup.LegendItemView;
 import com.chipset.pieviewgroup.LegendTypes;
 import com.chipset.pieviewgroup.PieViewGroup;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,25 +29,18 @@ public class MainActivity extends AppCompatActivity {
 		LoadData();
 		final PieViewGroup vertDonut = (PieViewGroup) findViewById(R.id.donut_v_legend);
 		final PieViewGroup horizDonut = (PieViewGroup) findViewById(R.id.donut_h_legend);
-		final Spinner textSize = (Spinner) findViewById(R.id.label_size);
-		final Integer[] items = new Integer[]{8,9,10,11,12,13,14,15};
-		final ArrayAdapter<Integer> adapter1 = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item, items);
-		textSize.setAdapter(adapter1);
 
+		final Integer[] items = new Integer[] { 8,9,10,11,12,13,14,15 };
+		final String[] fonts = new String[] { "default","custom" };
 		final Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/CUSTOM.TTF");
-		final Button btn = (Button) findViewById(R.id.btn);
-		btn.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				vertDonut.setLegendTypeface(custom_font);
-				// TODO: 18/11/2016  here
-			}
-		});
 
-		textSize.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+		final Spinner labelSize = (Spinner) findViewById(R.id.label_size);
+		final ArrayAdapter<Integer> adapter1 = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item, items);
+		labelSize.setAdapter(adapter1);
+		labelSize.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-				vertDonut.setLabelTextSizeSp((int)textSize.getSelectedItem());
+				vertDonut.setLabelTextSizeSp((int)labelSize.getSelectedItem());
 			}
 
 			@Override
@@ -67,6 +56,28 @@ public class MainActivity extends AppCompatActivity {
 			@Override
 			public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 				vertDonut.setLegendTextSizeSp((int)legendSize.getSelectedItem());
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> adapterView) {
+
+			}
+		});
+
+		final Spinner legendFont = (Spinner) findViewById(R.id.legend_font);
+		final ArrayAdapter<String> adapter3 = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item, fonts);
+		legendFont.setAdapter(adapter3);
+		legendFont.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+				switch (position) {
+					case (0) :
+						vertDonut.setLegendTypeface(null);
+						break;
+					case (1) :
+						vertDonut.setLegendTypeface(custom_font);
+						break;
+				}
 			}
 
 			@Override
@@ -117,6 +128,10 @@ public class MainActivity extends AppCompatActivity {
 		horizDonut.setChartType(ChartTypes.DONUT);
 		horizDonut.setData(dataSource);
 		horizDonut.build();
+
+		legendSize.setSelection(4,true);
+		labelSize.setSelection(2,true);
+		legendFont.setSelection(0,true);
 	}
 //ENDREGION Lifecycle
 

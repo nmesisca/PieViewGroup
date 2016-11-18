@@ -2,12 +2,8 @@ package com.chipset.pieviewgroup;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -29,18 +25,6 @@ class Utils {
 		final int color = a.getColor(0, 0);
 		a.recycle();
 		return color;
-	}
-
-	static Bitmap getBitmapFromVectorDrawable(Drawable drawable) {
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-			drawable = (DrawableCompat.wrap(drawable)).mutate();
-		}
-		final Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-				drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-		final Canvas canvas = new Canvas(bitmap);
-		drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-		drawable.draw(canvas);
-		return bitmap;
 	}
 
 	static class PVGColors {
@@ -94,13 +78,6 @@ class Utils {
 					TypedValue.COMPLEX_UNIT_SP,
 					value,
 					context.getResources().getDisplayMetrics());
-		}
-
-		/**
-		 * Convert from PX to DIP
-		 */
-		static float px2dp(@NonNull Context context, float value) {
-			return value / context.getResources().getDisplayMetrics().density;
 		}
 	}
 }
