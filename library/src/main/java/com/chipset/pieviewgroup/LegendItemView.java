@@ -1,68 +1,65 @@
 package com.chipset.pieviewgroup;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RectShape;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.text.TextPaint;
-import android.view.View;
+import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.AppCompatDrawableManager;
+import android.support.v7.widget.AppCompatTextView;
+import android.view.Gravity;
+import android.view.ViewGroup;
 
-class LegendItemView extends View {
+public class LegendItemView extends AppCompatTextView {
+
 	private static final String TAG = "LegendItemView";
-	private static final int LEGEND_ITEM_BOX_MARGIN = 12;
-	private static final int LEGEND_ITEM_BOX_SIZE_DP = 15;
-	private static final int LEGEND_ITEM_MARGIN = 26;
-	private TextPaint mTextPaint;
-	private Paint mBoxPaint;
-	private float mLegendBoxSizePx;
-	private LegendItem legendItem;
-	private RectF box_bounds;
-	private RectF text_bounds;
-	private int itemSize;
-	private Drawable mDropVector;
+	private Context mContext;
+	private static final int LEGEND_ITEM_BOX_SIZE_DP = 13;
 
-	private LegendItemView (Context context) {
+	private LegendItemView (@NonNull Context context) {
 		super(context);
 	}
 
-	public LegendItemView(@NonNull Context context, LegendItem item, Paint boxPaint, TextPaint textPaint) {
+	public LegendItemView(@NonNull Context context, @NonNull LegendItem item) {
 		super(context);
-		this.legendItem = item;
-		this.mBoxPaint = boxPaint;
-		this.mTextPaint = textPaint;
-		this.mLegendBoxSizePx = Utils.PVGConvert.dp2px(context, LEGEND_ITEM_BOX_SIZE_DP);
-		this.mDropVector = ContextCompat.getDrawable(context, this.legendItem.iconid);
-		Utils.PVGColors.tintMyDrawable(this.mDropVector, item.color);
-		buildView();
+		this.mContext = context;
+		this.setText(item.text);
+		this.setClickable(false);
+		this.setFocusable(false);
+		this.setTextSize(item.textsize);
+		this.setCompoundDrawablePadding(6);
+		this.setSingleLine(true);
+		if (item.typeface!=null) this.setTypeface(item.typeface);
+		this.setGravity(Gravity.CENTER_VERTICAL);
+		this.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+				ViewGroup.LayoutParams.WRAP_CONTENT));
+		// detect RTL environment
+		final boolean rtl = ViewCompat.getLayoutDirection(this) == ViewCompat.LAYOUT_DIRECTION_RTL;
+		Drawable start, end;
+		// Account for RTL and
+		if (item.iconid==0) {
+			final ShapeDrawable marker = createMarker(item.color);
+			start = rtl ? null : marker;
+			end = rtl ? marker : null;
+		} else {
+			// Obtain DrawableManager
+			final AppCompatDrawableManager dm = AppCompatDrawableManager.get();
+			start = rtl ? null : dm.getDrawable(context, item.iconid);
+			end = rtl ? dm.getDrawable(context, item.iconid) : null;
+		}
+		// tint and apply the compound Drawables
+		Utils.PVGColors.tintMyDrawable(start, item.color);
+		setCompoundDrawablesWithIntrinsicBounds(start, null, end, null);
 	}
 
-// REGION Lifecycle
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		setMeasuredDimension(itemSize,
-				(int)Math.max(box_bounds.height(), text_bounds.height()));
-	}
-
-	@Override
-	protected void onDraw(@NonNull Canvas canvas) {
-		super.onDraw(canvas);
-		mBoxPaint.setColor(legendItem.color);
-		canvas.drawBitmap(Utils.getBitmapFromVectorDrawable(mDropVector), null, box_bounds, null);
-		canvas.drawText(legendItem.text, text_bounds.left, text_bounds.top, mTextPaint);
-	}
-//ENDREGION Lifecycle
-
-	private void buildView() {
-		Rect bounds = new Rect();
-		mTextPaint.getTextBounds(legendItem.text, 0, legendItem.text.length(), bounds);
-		//float itemSize = mLegendBoxSizePx + bounds.width() + LEGEND_ITEM_BOX_MARGIN;
-		box_bounds = new RectF(0, 0, mLegendBoxSizePx, mLegendBoxSizePx );
-		text_bounds = new RectF(0,bounds.height(),bounds.width(),0);
-		text_bounds.offset(box_bounds.right + LEGEND_ITEM_BOX_MARGIN, (bounds.height()-mLegendBoxSizePx)/-2);
-		this.itemSize = (int)(box_bounds.width()+text_bounds.width()+ LEGEND_ITEM_BOX_MARGIN + LEGEND_ITEM_MARGIN);
+	@NonNull
+	private ShapeDrawable createMarker(int color) {
+		int size = (int) Utils.PVGConvert.dp2px(mContext, LEGEND_ITEM_BOX_SIZE_DP);
+		ShapeDrawable marker = new ShapeDrawable (new RectShape());
+		marker.setIntrinsicWidth (size);
+		marker.setIntrinsicHeight (size);
+		marker.getPaint().setColor(color);
+		return marker;
 	}
 }

@@ -1,6 +1,6 @@
 package com.chipset.pieviewgroup;
 
-import android.graphics.drawable.Drawable;
+import android.graphics.Typeface;
 
 /*
  * Created by nmesisca on 05/11/16 18:36
@@ -13,4 +13,6 @@ class LegendItem {
 	int percent;
 	int color;
 	int iconid;
+	float textsize;
+	Typeface typeface;
 }

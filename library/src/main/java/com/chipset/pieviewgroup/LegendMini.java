@@ -1,11 +1,12 @@
 package com.chipset.pieviewgroup;
 
 import android.content.Context;
-import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
-import android.text.TextPaint;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.FrameLayout;
+import java.util.ArrayList;
 
 /*
  * Created by nmesisca on 05/11/16 18:32
@@ -16,16 +17,34 @@ class LegendMini extends FrameLayout {
 
 	private static final int PAD_H = 22;
 	private static final int PAD_V = 20; // Space between child views.
-	private TextPaint mLegendPaint;
-	private Paint mBoxPaint;
-	private float mLegendTextSizePx;
-	private LegendItem[] legendItems;
+	@Nullable
+	public Typeface mLegendTypeface = null;
+	public int mIconId = 0;
+	public LegendTypes mLegendType = LegendTypes.SHORT;
+	public float mLegendTextSize;
+	public Slice[] mSlices;
+	private ArrayList<LegendItem> legendItems;
+	public ArrayList<LegendItemView> legendItemsViews;
 	private Context mContext;
-	private int mIconId=0;
 
 	public LegendMini(@NonNull Context context) {
 		super(context);
-		init(context);
+		this.mContext = context;
+	}
+
+// REGION Lifecycle
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		int parentHeight = MeasureSpec.getSize(heightMeasureSpec);
+		int parentWidth = MeasureSpec.getSize(widthMeasureSpec);
+		if (parentHeight<parentWidth) {
+			int myWidth = parentWidth-parentHeight;
+			setMeasuredDimension(myWidth, parentHeight);
+		} else {
+			int myHeight = parentHeight-parentWidth;
+			setMeasuredDimension(parentWidth, myHeight);
+		}
 	}
 
 	@Override
@@ -49,68 +68,51 @@ class LegendMini extends FrameLayout {
 			}
 		}
 	}
-
-	private void init(@NonNull Context context) {
-		setWillNotDraw(false);
-		setPaints();
-		this.mContext = context;
-	}
-
-// REGION Lifecycle
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		int parentHeight = MeasureSpec.getSize(heightMeasureSpec);
-		int parentWidth = MeasureSpec.getSize(widthMeasureSpec);
-		if (parentHeight<parentWidth) {
-			int myWidth = parentWidth-parentHeight;
-			setMeasuredDimension(myWidth, parentHeight);
-		} else {
-			int myHeight = parentHeight-parentWidth;
-			setMeasuredDimension(parentWidth, myHeight);
-		}
-	}
 //ENDREGION Lifecycle
 
+	public void build() {
+		if (mSlices==null || mSlices.length==0) return;
+		this.legendItems = buildLegendItems();
+		buildLegendViews();
+	}
+
 	/**
-	 * Set up paints and brushes
+	 * Build the legend items in the form of an array of LegendItems from the Slice objects
+	 *
+	 * @return The array of LegendItem objects
 	 */
-	private void setPaints() {
-		mLegendPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-		mLegendPaint.setTextSize(mLegendTextSizePx);
-		mLegendPaint.setTextAlign(Paint.Align.LEFT);
-		mBoxPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		mBoxPaint.setStyle(Paint.Style.FILL);
+	@NonNull
+	private ArrayList<LegendItem> buildLegendItems() {
+
+		final ArrayList<LegendItem> items = new ArrayList<>();
+		for(Slice slice : mSlices) {
+			final LegendItem item = new LegendItem();
+			item.percent = slice.percent;
+			item.text = mLegendType == LegendTypes.FULL ? String.format("%s : %d%%", slice.label,
+					item.percent) :  slice.label;
+			item.color = slice.sliceColor;
+			items.add(item);
+		}
+		return items;
 	}
 
-	public void setLegendItems(LegendItem[] legendItems) {
-		this.legendItems = legendItems;
-		start();
-	}
-
-	public void setLegendTextSizePx(float size) {
-		this.mLegendTextSizePx = size;
-		this.mLegendPaint.setTextSize(size);
-		start();
-	}
-
-	public void setLegendDrawableId(int iconId) {
-		this.mIconId=iconId;
-		start();
-	}
-
-	private void start() {
-		if (this.legendItems!=null) buildLegendViews();
-	}
-
-	private void buildLegendViews() {
+	public void buildLegendViews() {
 		removeAllViews();
-		for (LegendItem item : legendItems) {
+		legendItemsViews = new ArrayList<>();
+		for (LegendItem item: legendItems) {
 			if (item.percent!=0) {
-				item.iconid = this.mIconId == 0 ? item.iconid : this.mIconId;
-				LegendItemView itemView = new LegendItemView(mContext, item, mBoxPaint, mLegendPaint);
+				item.textsize = this.mLegendTextSize;
+				item.typeface = this.mLegendTypeface;
+				item.iconid = this.mIconId;
+				final LegendItemView itemView = new LegendItemView(mContext, item);
 				addView(itemView);
+				legendItemsViews.add(itemView);
 			}
 		}
+	}
+
+	@Override
+	public void addView(View child) {
+		if (child instanceof LegendItemView) super.addView(child);
 	}
 }

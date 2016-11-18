@@ -9,6 +9,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.TypedValue;
 import java.util.Random;
@@ -58,7 +59,8 @@ class Utils {
 			return Color.argb(255, red, green, blue);
 		}
 
-		static void tintMyDrawable(Drawable drawable, int color) {
+		static void tintMyDrawable(@Nullable Drawable drawable, int color) {
+			if (drawable==null) return;
 			drawable = DrawableCompat.wrap(drawable);
 			DrawableCompat.setTint(drawable.mutate(), color);
 		}

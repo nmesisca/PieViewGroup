@@ -5,6 +5,9 @@ import android.content.res.TypedArray;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.Typeface;
+import android.support.annotation.ColorInt;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -23,6 +26,7 @@ public class PieViewGroup extends FrameLayout {
 
 	private static final String TAG = "PieViewGroup";
 	// defaults
+
 	private static final int LEGEND_TEXT_SIZE_SP = 14;
 	private static final int LABEL_TEXT_SIZE_SP = 12;
 	private static final boolean PIE_SHOW_LABELS = true;
@@ -33,13 +37,11 @@ public class PieViewGroup extends FrameLayout {
 	@Nullable private Map<String, Integer> mData;
 	private Context mContext;
 	private int colorPrimary;
+	private boolean mAdaptiveColors = true;
 	private ArrayList<Integer> mColors = new ArrayList<>();
-	private Slice[] mSlices;
+
 	private PieMini pieMini;
 	private LegendMini legendMini;
-	private LegendTypes mLegendType;
-	private ChartTypes mChartType;
-	private int mLegendDrawableId;
 
 	public PieViewGroup(@NonNull Context context) {
 		super(context);
@@ -84,13 +86,13 @@ public class PieViewGroup extends FrameLayout {
 	private void init(@NonNull Context context, @Nullable AttributeSet attrs) {
 		mContext = context;
 		pieMini = new PieMini(context);
-		legendMini = new LegendMini(mContext);
+		legendMini = new LegendMini(context);
 		colorPrimary = Utils.readThemeColor(context, R.attr.colorPrimary );
 		// read attributes from XML layout
 		ReadAttrs(attrs);
 	}
 
-	private void ReadAttrs(AttributeSet attrs) {
+	private void ReadAttrs(@Nullable AttributeSet attrs) {
 		if (attrs != null) {
 			final TypedArray ta = mContext.getTheme().obtainStyledAttributes(attrs, R.styleable.PieViewGroup, 0, 0);
 			try {
@@ -98,13 +100,12 @@ public class PieViewGroup extends FrameLayout {
 				pieMini.showLabels(ta.getBoolean(R.styleable.PieViewGroup_pvg_showLabels, PIE_SHOW_LABELS));
 				pieMini.setLabelTextSizePx(Utils.PVGConvert.sp2px(mContext,
 						ta.getDimension(R.styleable.PieViewGroup_pvg_labelTextSize, LABEL_TEXT_SIZE_SP)));
-				legendMini.setLegendTextSizePx(Utils.PVGConvert.sp2px(mContext,
-						ta.getDimension(R.styleable.PieViewGroup_pvg_legendTextSize, LEGEND_TEXT_SIZE_SP)));
+				legendMini.mLegendTextSize = ta.getDimension(R.styleable.PieViewGroup_pvg_legendTextSize, LEGEND_TEXT_SIZE_SP);
 				pieMini.setDonutRadiusPercent(ta.getInt(R.styleable.PieViewGroup_pvg_donutRadiusPercent, DONUT_RADIUS_PERCENT));
 				final int ctype = ta.getInt(R.styleable.PieViewGroup_pvg_chartType, ChartTypes.PIE.ordinal());
 				pieMini.setChartType(ChartTypes.values()[ctype]);
 				final int ltype = ta.getInt(R.styleable.PieViewGroup_pvg_legendType, LegendTypes.SHORT.ordinal());
-				mLegendType = (LegendTypes.values()[ltype]);
+				legendMini.mLegendType = (LegendTypes.values()[ltype]);
 				if (colorsId != 0) {
 					Log.e(TAG, "Colors from XML");
 					final int[] y = getResources().getIntArray(colorsId);
@@ -118,13 +119,25 @@ public class PieViewGroup extends FrameLayout {
 		}
 	}
 
+	public void build() {
+		Slice[] slices = buildSlices();
+		pieMini.setSlices(slices);
+		if(getChildCount()>0) removeAllViews();
+		addView(pieMini);
+		legendMini.mSlices = slices;
+		legendMini.build();
+		addView(this.legendMini);
+	}
+
+	public void setAdaptiveColorsEnabled(boolean adaptive) { this.mAdaptiveColors = adaptive; }
+
 	/**
 	 * Override to pass Background color to the PieMini object
 	 *
 	 * @param color The new background color
 	 */
 	@Override
-	public void setBackgroundColor(int color) {
+	public void setBackgroundColor(@ColorInt int color) {
 		super.setBackgroundColor(color);
 		pieMini.setBackgroundColor(color);
 	}
@@ -142,24 +155,7 @@ public class PieViewGroup extends FrameLayout {
 	 * @param data Source data for the chart, as pairs of key,percentage
 	 */
 	public void setData(@NonNull Map<String, Integer> data) {
-		if (!data.isEmpty()) {
-			this.mData = data;
-			this.mSlices = buildSlices();
-			pieMini.setSlices(this.mSlices);
-			removeAllViews();
-			addView(pieMini);
-			start();
-		}
-	}
-
-	private void start() {
-		this.legendMini.setLegendItems(buildLegendItems());
-		if (getChildCount()>0) {
-			for(int i=0; i<getChildCount(); i++) {
-				if (getChildAt(i) instanceof LegendMini) removeViewAt(i);
-			}
-		}
-		if (this.mLegendType!=LegendTypes.NONE) addView(this.legendMini);
+		if (!data.isEmpty()) this.mData = data;
 	}
 
 	/**
@@ -167,10 +163,10 @@ public class PieViewGroup extends FrameLayout {
 	 *
 	 * @param iconId The resource id of the drawable to inject
 	 */
-	public void setLegendDrawableId(int iconId) {
+	public void setLegendDrawableId(@DrawableRes int iconId) {
 		if (iconId!=0) {
-			this.mLegendDrawableId = iconId;
-			legendMini.setLegendDrawableId(iconId);
+			legendMini.mIconId = iconId;
+			legendMini.build();
 		}
 	}
 
@@ -180,17 +176,22 @@ public class PieViewGroup extends FrameLayout {
 	 * @param type ChartType enum value : 0 for PIE, 1 for DONUT
 	 */
 	public void setChartType (ChartTypes type) {
-		this.mChartType = type;
 		pieMini.setChartType(type);
 	}
 
 	/**
 	 * Controls the visual appearance of the legend
 	 *
-	 * @param type Int value : 0 for NONE, 1 for SHORT, 2 for FULL size
+	 * @param mode Int value : 0 for NONE, 1 for SHORT, 2 for FULL size
 	 */
-	public void setLegendType (LegendTypes type) {
-		this.mLegendType = type;
+	public void setLegendMode (LegendTypes mode) {
+		if (mode==LegendTypes.NONE) {
+			legendMini.setVisibility(GONE);
+		} else {
+			legendMini.mLegendType = mode;
+			legendMini.build();
+			legendMini.setVisibility(VISIBLE);
+		}
 	}
 
 	/**
@@ -218,7 +219,8 @@ public class PieViewGroup extends FrameLayout {
 	 */
 	public void setLegendTextSizeSp(float textSize) {
 		if (textSize>0) {
-			legendMini.setLegendTextSizePx(Utils.PVGConvert.sp2px(mContext, textSize));
+			legendMini.mLegendTextSize = textSize;
+			legendMini.buildLegendViews();
 		}
 	}
 
@@ -229,6 +231,21 @@ public class PieViewGroup extends FrameLayout {
 	 */
 	public void setLabelTextSizeSp(float textSize) {
 		if (textSize>0) pieMini.setLabelTextSizePx(Utils.PVGConvert.sp2px(mContext, textSize));
+	}
+
+	/**
+	 * Set the typeface to use for the legend's text
+	 *
+	 * @param typeface The typeface to use
+	 */
+	public void setLegendTypeface(@Nullable Typeface typeface) {
+		if (typeface==null) return;
+		legendMini.mLegendTypeface = typeface;
+		legendMini.buildLegendViews();
+	}
+
+	public ArrayList<LegendItemView> getLegendItemViews() {
+		return (legendMini != null ? legendMini.legendItemsViews : null);
 	}
 
 	/**
@@ -255,7 +272,8 @@ public class PieViewGroup extends FrameLayout {
 			final float endAngle = total == 0 ? 0 : 360 * slice.percent / (float) total;
 			final float newStartAngle = arcStart + endAngle;
 			slice.labelOffset = getTextOffset(slice.toString(), pieMini.mLabelPaint);
-			if (mColors.size() == i) mColors.add(Utils.PVGColors.generateRandomColor(colorPrimary));
+			if (mColors.size() == i) mColors.add(Utils.PVGColors.generateRandomColor(
+					mAdaptiveColors ? colorPrimary : 0));
 			slice.sliceColor = mColors.get(i);
 			slice.labelColor = Utils.PVGColors.getContrastTextColor(slice.sliceColor);
 			slice.startDegree = arcStart;
@@ -266,26 +284,6 @@ public class PieViewGroup extends FrameLayout {
 			++i;
 		}
 		return slices;
-	}
-
-	/**
-	 * Build the legend items in the form of an array of LegendItems from the Slice objects
-	 *
-	 * @return The array of LegendItem objects
-	 */
-	@NonNull
-	private LegendItem[] buildLegendItems() {
-		final LegendItem[] items = new LegendItem[mSlices.length];
-		for(int i=0; i<mSlices.length; i++) {
-			final LegendItem item = new LegendItem();
-			item.iconid = mLegendDrawableId==0 ? R.drawable.ic_drop : mLegendDrawableId;
-			item.percent = mSlices[i].percent;
-			item.text = mLegendType == LegendTypes.FULL ? String.format("%s : %d%%", mSlices[i].label,
-					item.percent) :  mSlices[i].label;
-			item.color = mSlices[i].sliceColor;
-			items[i]=item;
-		}
-		return items;
 	}
 
 	/**
@@ -300,6 +298,18 @@ public class PieViewGroup extends FrameLayout {
 		final Rect bounds = new Rect();
 		paint.getTextBounds(text, 0, text.length(), bounds);
 		return new Point((bounds.left + bounds.width())/2, (bounds.bottom + bounds.height())/2);
+	}
+
+	@Override
+	public void addView(View child) {
+		int index = this.indexOfChild(child);
+		if (index >-1) {
+			if (getChildAt(index) instanceof PieMini) return;
+			if (getChildAt(index) instanceof LegendMini){
+				removeViewAt(index);
+			}
+		}
+		if (child instanceof LegendMini || child instanceof PieMini) super.addView(child);
 	}
 
 	@Override
