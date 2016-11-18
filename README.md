@@ -5,7 +5,7 @@ Quick and easy Pie chart with legend for Android API 16+
 ##1. Provide the gradle dependency in your module-level gradle.build file
 
 ```gradle
-compile('com.chipset:pieviewgroup:0.3.0')
+compile('com.chipset:pieviewgroup:0.6.0')
 ```
 
 Make sure the 'repositories' section in your project-level gradle.build file contains
@@ -25,9 +25,10 @@ Make sure the 'repositories' section in your project-level gradle.build file con
               android:id="@+id/myPie"
               android:layout_width="match_parent"
               android:layout_height="300dp"
-              ealk:pvg_chartType="PIE"
-              ealk:pvg_showLabels="true"
-              ealk:pvg_legendType="SHORT"/>
+              mypie:pvg_chartType="PIE"
+              mypie:pvg_showLabels="true"
+              mypie:pvg_legendType="SHORT"/>
+              ...
 ```
 
 ##3. Reference it in your code
@@ -46,7 +47,7 @@ Adjust the options of the PieViewGroup
           pieChart.setChartType(ChartTypes.DONUT);
 ```
 
-Setup the data source for the chart and pass it to the PieViewGroup
+Setup the data source for the chart and pass it to the PieViewGroup, then call the build() method
 
 ```java
           ...
@@ -58,6 +59,7 @@ Setup the data source for the chart and pass it to the PieViewGroup
           dataSource.put("K",10);
           ...
           pieChart.setData(dataSource);
+          pieChart.build();
 ```
 
 #Developed By

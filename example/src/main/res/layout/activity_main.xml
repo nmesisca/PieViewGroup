@@ -58,7 +58,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/switch_legend_type"
-        android:textAlignment="viewStart"
+        android:textAlignment="viewEnd"
         android:gravity="end"
         android:text="Legend type"
         android:textSize="12sp"

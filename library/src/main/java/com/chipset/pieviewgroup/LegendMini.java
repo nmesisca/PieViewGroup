@@ -24,7 +24,7 @@ class LegendMini extends FrameLayout {
 	public float mLegendTextSize;
 	public Slice[] mSlices;
 	private ArrayList<LegendItem> legendItems;
-	private Context mContext;
+	private final Context mContext;
 
 	public LegendMini(@NonNull Context context) {
 		super(context);

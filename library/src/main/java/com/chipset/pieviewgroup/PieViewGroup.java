@@ -122,6 +122,7 @@ public class PieViewGroup extends FrameLayout {
 	 * Builds the PieViewGroup
 	 */
 	public void build() {
+		if (mData==null || mData.size()==0) return;
 		Slice[] slices = buildSlices();
 		pieMini.setSlices(slices);
 		if(getChildCount()>0) removeAllViews();
