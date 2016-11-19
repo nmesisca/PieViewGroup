@@ -6,7 +6,9 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.util.Log;
 import android.util.TypedValue;
 import java.util.Random;
 
@@ -53,8 +55,9 @@ class Utils {
 			final int red = Color.red(colorIntValue);
 			final int green = Color.green(colorIntValue);
 			final int blue = Color.blue(colorIntValue);
-			final double lum = (((0.299 * red) + ((0.587 * green) + (0.114 * blue))));
-			return lum > 186 ? 0xFF000000 : 0xFFFFFFFF;
+			final double brightness_value=Math.pow(0.22475*Math.pow(red,2.235) + 0.7154*Math.pow(green,
+					2.235) + 0.05575*Math.pow(blue,2.235), 1/2.235);
+			return brightness_value > 164 ? 0xFF000000 : 0xFFFFFFFF;
 		}
 	}
 
