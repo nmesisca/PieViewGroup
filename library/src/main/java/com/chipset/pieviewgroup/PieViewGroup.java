@@ -56,6 +56,7 @@ public class PieViewGroup extends FrameLayout {
 	@Override
 	protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
 		final int width = right - left;
+		if (width==(top-bottom)) legendMini.setVisibility(GONE);
 		int xpos = getPaddingLeft();
 		int ypos = getPaddingTop();
 		int height = 0;
