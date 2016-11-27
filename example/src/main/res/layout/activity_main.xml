@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,122 +9,116 @@
     android:background="#FFFFFF"
     tools:context="com.chipset.pieviewgroupdemo.MainActivity">
 
-    <TextView
-        android:text="Legend font"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/label_size3"
-        app:layout_constraintRight_toLeftOf="@+id/legend_font"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintTop_toTopOf="@+id/legend_font"
-        android:textSize="12sp"/>
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:id="@+id/legend_font"
-        app:layout_constraintRight_toRightOf="@+id/legend_size"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/legend_size"/>
+        <com.chipset.pieviewgroup.PieViewGroup
+            android:id="@+id/default_v"
+            android:layout_marginStart="16dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/textView4"
+            android:layout_height="220dp"
+            android:layout_width="165dp">
+        </com.chipset.pieviewgroup.PieViewGroup>
 
-    <android.support.v7.widget.SwitchCompat
-        android:layout_height="wrap_content"
-        android:id="@+id/switch_labels"
-        android:textAlignment="viewEnd"
-        android:gravity="end"
-        android:text="Labels"
-        android:checked="true"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginRight="16dp"
-        android:layout_width="wrap_content"
-        android:textSize="12sp"
-        app:layout_constraintTop_toTopOf="@+id/donut_v_legend"/>
+        <com.chipset.pieviewgroup.PieViewGroup
+            android:id="@+id/non_adaptive"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginRight="16dp"
+            android:layout_height="220dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/textView8"
+            android:layout_width="165dp">
 
-    <android.support.v7.widget.SwitchCompat
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/switch_type"
-        android:textAlignment="viewEnd"
-        android:gravity="end"
-        android:text="Chart type"
-        app:layout_constraintRight_toRightOf="@+id/switch_labels"
-        app:layout_constraintTop_toBottomOf="@+id/switch_labels"
-        android:layout_marginTop="8dp"
-        android:textSize="12sp"/>
+        </com.chipset.pieviewgroup.PieViewGroup>
 
-    <android.support.v7.widget.SwitchCompat
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/switch_legend_type"
-        android:textAlignment="viewEnd"
-        android:gravity="end"
-        android:text="Legend type"
-        android:textSize="12sp"
-        app:layout_constraintRight_toRightOf="@+id/switch_type"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/switch_type"
-        android:checked="true"/>
+        <TextView
+            android:text="Defaults - Horizontal layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView6"
+            android:textStyle="normal|bold"
+            android:textSize="18sp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@+id/non_adaptive"/>
 
-    <Spinner
-        android:layout_height="48dp"
-        android:id="@+id/label_size"
-        android:layout_width="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/switch_legend_type"
-        app:layout_constraintRight_toRightOf="@+id/switch_legend_type"/>
+        <com.chipset.pieviewgroup.PieViewGroup
+            android:id="@+id/default_h"
+            android:layout_marginStart="16dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/textView6"
+            android:layout_height="160dp"
+            android:layout_width="260dp">
+        </com.chipset.pieviewgroup.PieViewGroup>
 
-    <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:id="@+id/legend_size"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/label_size"
-        app:layout_constraintRight_toRightOf="@+id/label_size"/>
+        <TextView
+            android:text="Defaults - Vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView4"
+            android:textStyle="normal|bold"
+            android:textSize="18sp"
+            android:layout_marginStart="16dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-    <com.chipset.pieviewgroup.PieViewGroup
-        android:id="@+id/donut_v_legend"
-        android:layout_height="240dp"
-        android:layout_width="170dp"
-        android:layout_marginStart="16dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toTopOf="parent">
-    </com.chipset.pieviewgroup.PieViewGroup>
+        <TextView
+            android:text="Donut Chart with Custom Legend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView7"
+            android:textStyle="normal|bold"
+            android:textSize="18sp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@+id/default_h"/>
 
-    <com.chipset.pieviewgroup.PieViewGroup
-        android:id="@+id/donut_h_legend"
-        android:layout_height="200dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="16dp"
-        android:layout_marginStart="16dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginLeft="16dp"
-        android:layout_width="200dp">
-    </com.chipset.pieviewgroup.PieViewGroup>
+        <com.chipset.pieviewgroup.PieViewGroup
+            android:id="@+id/donut_custom_legend"
+            android:layout_marginStart="16dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/textView7"
+            android:layout_width="260dp"
+            android:layout_height="160dp">
+        </com.chipset.pieviewgroup.PieViewGroup>
 
-    <TextView
-        android:text="Label size"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/label_size1"
-        app:layout_constraintRight_toLeftOf="@+id/label_size"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintTop_toTopOf="@+id/label_size"
-        android:textSize="12sp"/>
-
-    <TextView
-        android:text="Legend size"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/label_size2"
-        app:layout_constraintRight_toLeftOf="@+id/legend_size"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintTop_toTopOf="@+id/legend_size"
-        android:textSize="12sp"/>
-
-</android.support.constraint.ConstraintLayout>
+        <TextView
+            android:text="Non-Adaptive colors"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView8"
+            android:textSize="18sp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toTopOf="parent"/>
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

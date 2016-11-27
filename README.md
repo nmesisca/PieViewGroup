@@ -1,11 +1,27 @@
 # PieViewGroup  [ ![Download](https://api.bintray.com/packages/nickmesisca/Android-Controls/PieViewGroup/images/download.svg) ](https://bintray.com/nickmesisca/Android-Controls/PieViewGroup/_latestVersion)
 Quick and easy Pie chart with legend for Android API 16+
 
+##Features
+* Customizable legend
+    * Font
+    * Colors
+    * Icon
+* Customizable chart
+    * **Pie** / **Donut** charts
+    * **Adaptive Colors** (based on colorPrimary from your theme)
+    * Labels with **auto-contrast** (always readable)
+* Supports Vector drawables
+* Supports Android **API 16+** (**4.1+ JellyBean**)
+
+##Screenshots
+
+![Image](https://cloud.githubusercontent.com/assets/7246500/20644924/0859873e-b441-11e6-95fd-6d701d83b1eb.png)
+
 #Setup
 ##1. Provide the gradle dependency in your module-level gradle.build file
 
 ```gradle
-compile('com.chipset:pieviewgroup:0.6.0')
+compile('com.chipset:pieviewgroup:0.7.0')
 ```
 
 Make sure the 'repositories' section in your project-level gradle.build file contains

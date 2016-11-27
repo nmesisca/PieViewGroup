@@ -101,6 +101,7 @@ class LegendMini extends FrameLayout {
 	 * Builds the legend's Views and attaches the to the hierarchy
 	 */
 	public void buildLegendViews() {
+		if (legendItems==null) return;
 		removeAllViews();
 		for (LegendItem item: legendItems) {
 			if (item.percent!=0) {
